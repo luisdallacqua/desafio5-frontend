@@ -10,8 +10,8 @@ import Paper from '@mui/material/Paper'
 import TablePagination from '@mui/material/TablePagination'
 import axios from 'axios'
 import { ITransferencia } from '../Model/ResponseModel'
-import SearchBar from '../components/SearchInput'
-import { TextField } from '@mui/material'
+import SearchIcon from '@mui/icons-material/Search'
+import { Button, Stack, TextField } from '@mui/material'
 
 const StyledTableHeaderCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -33,30 +33,39 @@ const StyledTableRowCell = styled(TableRow)(({ theme }) => ({
   }
 }))
 
-const maxSizeAvatar = {
-  maxWidth: '60px',
-  maxHeight: '60px'
-}
-
-const sizeOfNameToTrim = 30
+const baseURL = 'http://localhost:8080/transferencias/'
 
 export default function BasicTable() {
-  useEffect(() => {
-    axios.get('http://localhost:8080/transferencias/').then((res: any) => {
-      console.log(res)
-      setResponse(res.data)
-    })
-  }, [])
-
   const [response, setResponse] = useState<ITransferencia[]>()
+  const [URL, setURL] = useState(`${baseURL}`)
+  const [idDaConta, setIdDaConta] = useState('2')
   const [dataInicio, setDataInicio] = useState('')
   const [dataFim, setDataFim] = useState('')
   const [operador, setOperador] = useState('')
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(5)
 
+  useEffect(() => {
+    axios.get(`${URL}`).then((res: any) => {
+      console.log(res)
+      setResponse(res.data)
+    })
+  }, [URL])
+
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage)
+  }
+
+  const handleFilterUrl = (
+    dataInicio: string,
+    dataFim: string,
+    operador: string
+  ) => {
+    setURL(
+      `${baseURL}${idDaConta}?${dataInicio ? `dataInicio=${dataInicio}&` : ''}${
+        dataFim ? `dataFim=${dataFim}&` : ''
+      }${operador ? `operador=${operador}` : ''}`
+    )
   }
 
   const handleChangeRowsPerPage = (
@@ -67,29 +76,68 @@ export default function BasicTable() {
   }
 
   return (
-    <>
-      <SearchBar
-        search={dataInicio}
-        setSearch={setDataInicio}
-        placeholder="Data inicio (01/01/2000) "
-      />
-      <SearchBar
-        search={dataFim}
-        setSearch={setDataFim}
-        placeholder="Data fim (01/01/2000) "
-      />
-      <SearchBar
-        search={operador}
-        setSearch={setOperador}
-        placeholder="Nome do operador"
-      />
+    <Stack maxWidth="75vw" margin="0 auto">
+      <Stack direction="row" justifyContent="space-between" mt={2}>
+        <TextField
+          id="operacao"
+          label="Id da operação"
+          placeholder="Por padrão é 2"
+          type="text"
+          value={idDaConta}
+          onChange={(e) => setIdDaConta(e.target.value)}
+          sx={{ width: 220 }}
+        />
+
+        <TextField
+          id="date"
+          label="Data Inicio"
+          type="date"
+          defaultValue="2017-05-24"
+          value={dataInicio}
+          onChange={(e) => setDataInicio(e.target.value)}
+          sx={{ width: 220 }}
+          InputLabelProps={{
+            shrink: true
+          }}
+        />
+        <TextField
+          id="date"
+          label="Data Fim"
+          type="date"
+          defaultValue="2017-05-24"
+          value={dataFim}
+          onChange={(e) => setDataFim(e.target.value)}
+          sx={{ width: 220 }}
+          InputLabelProps={{
+            shrink: true
+          }}
+        />
+
+        <TextField
+          id="nomeOperador"
+          label="Nome do Operador"
+          type="text"
+          value={operador}
+          onChange={(e) => setOperador(e.target.value)}
+          sx={{ width: 220 }}
+        />
+      </Stack>
+
+      <Stack direction="row" justifyContent="flex-end" mt={2} mb={2}>
+        <Button
+          variant="contained"
+          endIcon={<SearchIcon />}
+          onClick={() => handleFilterUrl(dataInicio, dataFim, operador)}
+        >
+          Pesquisar
+        </Button>
+      </Stack>
 
       <Paper
         sx={{
-          maxWidth: '50vw',
           display: 'flex',
           flexDirection: 'column',
-          margin: '0 auto'
+          marginTop: '10px'
         }}
       >
         <TableContainer
@@ -121,12 +169,6 @@ export default function BasicTable() {
                   </StyledTableRowCell>
                 )
               })}
-              <StyledTableRowCell>
-                <TableCell align="left">14/02/2022</TableCell>
-                <TableCell align="left">R$ 30895,46</TableCell>
-                <TableCell align="left">depósito</TableCell>
-                <TableCell align="left">Fulano</TableCell>
-              </StyledTableRowCell>
             </TableBody>
           </Table>
         </TableContainer>
@@ -140,6 +182,6 @@ export default function BasicTable() {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
-    </>
+    </Stack>
   )
 }
