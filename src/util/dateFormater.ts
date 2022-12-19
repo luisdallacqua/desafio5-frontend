@@ -6,7 +6,5 @@ export const dateFormatter = (date: string) => {
   const month = dataNumbers[1]
   const day = dataNumbers[2]
 
-  console.log(dataNumbers)
-  console.log(`return é ${day}/${month}/${year}`)
   return `${day}/${month}/${year}`
 }
