@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
@@ -11,7 +11,8 @@ import TablePagination from '@mui/material/TablePagination'
 import axios from 'axios'
 import { ITransferencia } from '../Model/ResponseModel'
 import SearchIcon from '@mui/icons-material/Search'
-import { Button, Stack, TextField } from '@mui/material'
+import { Button, FormControl, InputAdornment, InputLabel, OutlinedInput, Stack, TextField } from '@mui/material'
+import { dateFormatter } from '../util/dateFormater'
 
 const StyledTableHeaderCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -37,23 +38,46 @@ const baseURL = 'http://localhost:8080/transferencias/'
 
 export default function BasicTable() {
   const [response, setResponse] = useState<ITransferencia[]>()
-  const [URL, setURL] = useState(`${baseURL}`)
+  const [responseTotal, setResponseTotal] = useState<ITransferencia[]>()
   const [idDaConta, setIdDaConta] = useState('2')
+  const [URL, setURL] = useState(`${baseURL}${idDaConta}`)
   const [dataInicio, setDataInicio] = useState('')
   const [dataFim, setDataFim] = useState('')
   const [operador, setOperador] = useState('')
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(5)
 
-  useEffect(() => {
+  const getAllElementsInConta = async () => {
+    axios.get(`${baseURL}${idDaConta}`).then((res: any) => {
+      console.log("NÃO FILTRTADO",res)
+      setResponseTotal(res.data)
+    })
+  }
+  const getElementsWithFiltersInConta = async () => {
     axios.get(`${URL}`).then((res: any) => {
-      console.log(res)
+      console.log("FILTRTADO",res)
       setResponse(res.data)
     })
+  }
+
+  useEffect(() => {
+    getAllElementsInConta()     
+    getElementsWithFiltersInConta()
   }, [URL])
+
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage)
+  }
+
+  const getAllValuesInIdConta = (responseTotal: ITransferencia[]) => {
+      console.log("RESPONSE TOTAL AQUI", responseTotal)
+      return responseTotal?.map(res => res.valor).reduce((prev, next) => prev + next, 0)
+    }
+  
+  
+  const getAllValuesInFilteredIdConta = (response: ITransferencia[]) => {
+    return response?.map(res => res.valor).reduce((prev, next) => prev + next, 0)
   }
 
   const handleFilterUrl = (
@@ -132,7 +156,56 @@ export default function BasicTable() {
           Pesquisar
         </Button>
       </Stack>
+        
+       <Stack direction="row" justifyContent="space-evenly" mt={2}>
 
+        <FormControl >
+          <InputLabel htmlFor="outlined-adornment-amount">Valor Total</InputLabel>
+          <OutlinedInput
+            id="outlined-adornment-amount"
+            startAdornment={<InputAdornment position="start">R$</InputAdornment>}
+            label="Amount"
+            value={getAllValuesInIdConta(responseTotal || [] as ITransferencia[])}
+            inputProps={{
+            readOnly: true,
+          }}
+          />
+        </FormControl>
+          <FormControl >
+          <InputLabel htmlFor="outlined-adornment-amount">Valor no Período</InputLabel>
+          <OutlinedInput
+            id="outlined-adornment-amount"
+            startAdornment={<InputAdornment position="start">R$</InputAdornment>}
+            label="Amount"
+            value={getAllValuesInFilteredIdConta(response || [] as ITransferencia[])}
+            inputProps={{
+            readOnly: true,
+          }}
+          />
+        </FormControl>
+{/* 
+        <TextField
+          id="valorTtotal"
+          label="Valor Total"
+          type="text"
+          value={getAllValuesInIdConta(responseTotal || [] as ITransferencia[])}          
+          sx={{ width: 220 }}
+          InputLabelProps={{
+            shrink: true
+          }}
+        />
+        <TextField
+          id="valorTtotal"
+          label="Valor no periodo"
+          type="text"
+          value={getAllValuesInFilteredIdConta(response || [] as ITransferencia[])}          
+          sx={{ width: 220 }}
+          InputLabelProps={{
+            shrink: true
+          }}
+        /> */}
+       </Stack>    
+      
       <Paper
         sx={{
           display: 'flex',
@@ -145,7 +218,7 @@ export default function BasicTable() {
           sx={{ maxWidth: '90vw', overflow: 'auto' }}
         >
           <Table aria-label="simple table">
-            <TableHead>
+            <TableHead>             
               <TableRow hover={true}>
                 <StyledTableHeaderCell>Data</StyledTableHeaderCell>
                 <StyledTableHeaderCell>Quantia</StyledTableHeaderCell>
@@ -159,7 +232,7 @@ export default function BasicTable() {
                 return (
                   <StyledTableRowCell key={response.id}>
                     <TableCell align="left">
-                      {response.dataTransferencia}
+                      {dateFormatter(response.dataTransferencia)}
                     </TableCell>
                     <TableCell align="left">{response.valor}</TableCell>
                     <TableCell align="left">{response.tipo}</TableCell>
