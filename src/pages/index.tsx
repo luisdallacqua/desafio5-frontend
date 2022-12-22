@@ -21,24 +21,22 @@ import FilterForm from '../components/FilterForm/FilterForm'
 const baseURL = 'http://localhost:8080/transferencias/'
 
 export default function Index() {
-  const [response, setResponse] = useState<ITransferencia[]>()
+  const [response, setResponse] = useState<ITransferencia[]>([] as ITransferencia[])
   const responseTotal = useRef<ITransferencia[]>([] as ITransferencia[])
   const [idDaConta, setIdDaConta] = useState('2')
   const [URL, setURL] = useState(`${baseURL}${idDaConta}`)
   const [dataInicio, setDataInicio] = useState('')
   const [dataFim, setDataFim] = useState('')
   const [operador, setOperador] = useState('')
-  // const [page, setPage] = useState(0)
-  // const [rowsPerPage, setRowsPerPage] = useState(5)
 
   const getAllElementsInConta = async () => {
     axios.get<ITransferencia[]>(`${baseURL}${idDaConta}`).then((res: any) => {
-      responseTotal.current = res.data
+      responseTotal.current = res.data.content
     })
   }
   const getElementsWithFiltersInConta = async () => {
-    axios.get<ITransferencia[]>(`${URL}`).then((res) => {
-      setResponse(res.data)
+    axios.get(`${URL}`).then((res) => {
+      setResponse(res.data.content)
     })
   }
 
@@ -46,7 +44,6 @@ export default function Index() {
     getAllElementsInConta()
     getElementsWithFiltersInConta()
   }, [URL])
-
 
   const getTotalValueOfResponse = (responseTotal: ITransferencia[]) => {
       return responseTotal?.map(res => res.valor).reduce((prev, next) => prev + next, 0)
@@ -77,36 +74,15 @@ export default function Index() {
         operador={operador}
         setOperador={setOperador}
         handleFilterUrl={handleFilterUrl}
-      />
-    
-       <Stack direction="row" justifyContent="space-evenly" mt={2}>
-        <FormControl >
-          <InputLabel htmlFor="outlined-adornment-amount">Valor Total</InputLabel>
-          <OutlinedInput
-            id="outlined-adornment-amount"
-            startAdornment={<InputAdornment position="start">R$</InputAdornment>}
-            label="Amount"
-            value={getTotalValueOfResponse(responseTotal.current || [] as ITransferencia[]).toFixed(2)}
-            inputProps={{
-            readOnly: true,
-          }}
-          />
-        </FormControl>
-          <FormControl >
-          <InputLabel htmlFor="outlined-adornment-amount">Valor no Período</InputLabel>
-          <OutlinedInput
-            id="outlined-adornment-amount"
-            startAdornment={<InputAdornment position="start">R$</InputAdornment>}
-            label="Amount"
-            value={getTotalValueOfResponse(response || [] as ITransferencia[]).toFixed(2)}
-            inputProps={{
-            readOnly: true,
-          }}
-          />
-        </FormControl>
+      />    
+       <Stack direction="row" justifyContent="space-evenly" mt={2} mb={1} sx={{
+        backgroundColor: '#424242',
+        borderRadius: '5px'
+       }}>
+        <h4 style={{color: "#eee"}}>{`VALOR TOTAL : R$ ${getTotalValueOfResponse(responseTotal.current || [] as ITransferencia[]).toFixed(2)}`}</h4>
+        <h4 style={{color: "#eee"}}>{`VALOR NO PERÍODO : R$ ${getTotalValueOfResponse(response || [] as ITransferencia[]).toFixed(2)}`}</h4>        
        </Stack>
-       <BasicTable response={response || [] as ITransferencia[]}/>
-     
+       <BasicTable response={response || [] as ITransferencia[]}/>     
     </Stack>
   )
 }

@@ -9,5 +9,4 @@ export interface ITransferencia {
   valor: number
   nomeOperadorTransacao: string
   tipo: string
-  conta: IConta
 }

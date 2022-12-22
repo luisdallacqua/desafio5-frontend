@@ -54,8 +54,7 @@ export default function BasicTable({ response }: ITabelaDados) {
     <Paper
       sx={{
         display: 'flex',
-        flexDirection: 'column',
-        marginTop: '10px'
+        flexDirection: 'column'
       }}
     >
       <TableContainer
@@ -73,29 +72,35 @@ export default function BasicTable({ response }: ITabelaDados) {
           </TableHead>
 
           <TableBody>
-            {response?.map((response: ITransferencia) => {
-              return (
-                <StyledTableRowCell key={response.id}>
-                  <TableCell align="left">
-                    {dateFormatter(response.dataTransferencia)}
-                  </TableCell>
-                  <TableCell align="left">
-                    {`R$ ${response.valor.toFixed(2)}`}
-                  </TableCell>
-                  <TableCell align="left">{response.tipo}</TableCell>
-                  <TableCell align="left">
-                    {response.nomeOperadorTransacao}
-                  </TableCell>
-                </StyledTableRowCell>
-              )
-            })}
+            {response ? (
+              response
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((response: ITransferencia) => {
+                  return (
+                    <StyledTableRowCell key={response.id}>
+                      <TableCell align="left">
+                        {dateFormatter(response.dataTransferencia)}
+                      </TableCell>
+                      <TableCell align="left">
+                        {`R$ ${response.valor.toFixed(2)}`}
+                      </TableCell>
+                      <TableCell align="left">{response.tipo}</TableCell>
+                      <TableCell align="left">
+                        {response.nomeOperadorTransacao}
+                      </TableCell>
+                    </StyledTableRowCell>
+                  )
+                })
+            ) : (
+              <p>Nenhuma resposta</p>
+            )}
           </TableBody>
         </Table>
       </TableContainer>
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={10}
+        count={response.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
