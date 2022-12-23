@@ -9,7 +9,8 @@ import TableRow from '@mui/material/TableRow'
 import Paper from '@mui/material/Paper'
 import TablePagination from '@mui/material/TablePagination'
 import { ITransferencia } from '../../Model/ResponseModel'
-import { dateFormatter } from '../../util/dateFormater'
+import { dateFormatter } from '../../util/helpers'
+import { Typography } from '@mui/material'
 
 const StyledTableHeaderCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -72,7 +73,7 @@ export default function BasicTable({ response }: ITabelaDados) {
           </TableHead>
 
           <TableBody>
-            {response ? (
+            {response.length > 0 ? (
               response
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((response: ITransferencia) => {
@@ -92,7 +93,11 @@ export default function BasicTable({ response }: ITabelaDados) {
                   )
                 })
             ) : (
-              <p>Nenhuma resposta</p>
+              <TableRow sx={{ margin: '0 auto' }}>
+                <Typography variant="h6" m={3} p={3}>
+                  Nenhuma resposta com os filtros passados, tente outra consulta
+                </Typography>
+              </TableRow>
             )}
           </TableBody>
         </Table>
