@@ -1,30 +1,44 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+<h2 align="center"> Desafio Front End </h2>
 
-## Getting Started
+<h4 align="center"> Cliente para exibição de transferências</h4>
 
-First, run the development server:
+<p align="center">
+    <img alt="GitHub top language" src="https://img.shields.io/github/languages/top/luisdallacqua/desafio5-frontend.svg">
+    <img alt="node version" src="https://img.shields.io/static/v1?label=node&message=v.16.18.1&color=green&">
+</p>
+
+### Descrição
+
+- Aplicação que consiste em uma tabela, que faz requisição para o [servidor](https://github.com/luisdallacqua/desafio5-backend) que irá rodar no link: [http://localhost:8080](http://localhost:8080).
+
+- A tabela possui 4 filtros:
+    - O primeiro é o id da conta para filtrar as transferências;
+    - O segundo e terceiro são respectivamente a data de início e fim da filtragem;
+    - O quarto e último é o nome do operador das transferências
+
+#### Vídeo demonstrando funcionamento do cliente em conjunto com a API
+
+[Loom video](https://www.loom.com/share/0bb2cfc2b65940a68be92ffd5506756b)
+
+#### Tecnologias utilizadas
+
+- [Next.js](https://nextjs.org/)
+- [Typescript](https://www.typescriptlang.org/)
+- [Material-Ui](https://mui.com/)
+- [Axios](https://www.npmjs.com/package/axios)
+
+
+## Como rodar o projeto
+
+###### Os próximos passos leva em consideração que já possui node e npm instalados no computador local. Caso não possua [instale](https://nodejs.org/en/download/) o node primeiramente.
+
+
+Rode os seguintes comandos:
 
 ```bash
+npm install
+#and
 npm run dev
-# or
-yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/import?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Abra [http://localhost:3000](http://localhost:3000) no browser e acesse à informação.

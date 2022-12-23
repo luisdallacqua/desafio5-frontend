@@ -52,7 +52,7 @@ export default function Index() {
   } = useGetTransfersElements(URL)
 
   return (
-    <Stack maxWidth="75vw" margin="0 auto">
+    <Stack maxWidth="75vw" margin="8em auto">
       <FilterForm
         idDaConta={idDaConta}
         setIdDaConta={setIdDaConta}
